@@ -7,7 +7,7 @@ from gramps.gen.dbstate import DbState
 from gramps.cli.grampscli import CLIManager
 from gramps.gen.lib import Person, Name, Surname, NameType, Event, EventType, Date, Place, EventRoleType, EventRef, PlaceName
 
-name = "/users/bruno/.gramps/grampsdb/5ec17554"
+name = r"C:\Users\bug_b\AppData\Roaming\gramps\grampsdb\5eee3ab5"
 
 dbstate = DbState()
 climanager = CLIManager(dbstate, True, None)
