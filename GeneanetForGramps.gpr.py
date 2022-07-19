@@ -18,7 +18,7 @@
 
 #print('Before registering Geneanet Plugin')
 register(TOOL,
-    id    = 'Import Geneanet data for Gramps',
+    id    = 'Import_Geneanet',
     name  = _("Import Geneanet data for Gramps"),
     #name_accell  = _("Geneanet for Gramps"),
     description =  _("Extension to import data from Geneanet into Gramps."),

@@ -232,7 +232,7 @@ class GeneanetForGrampsOptions(MenuToolOptions):
         self.__user = StringOption(_("Account"), 'Identifiant ou adresse e-mail')
         self.__user.set_help(_("Experimental field for setting geneanet stuff (user)"))
         menu.add_option(category_name, "user", self.__user)
-   
+
         self.__pass = 'pass'
         self.__pass = StringOption(_("Password"), 'Mot de passe')
         self.__pass.set_help(_("Experimental field for setting geneanet stuff (password)"))
@@ -866,7 +866,7 @@ class GFamily(GBase):
                     self.g_childref.append(c)
             except:
                 LOG.debug('child, father and spouse(%s)' % idx)
-            
+
 
         if self.g_marriagedate and self.g_marriageplace and self.g_marriageplacecode:
             if verbosity >= 2:
@@ -1152,23 +1152,23 @@ class GPerson(GBase):
         # Needed as Geneanet returned relative links
 
         # https://edmundmartin.com
-        from random import choice
- 
-        desktop_agents = ['Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-                 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14',
-                 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-                 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-                 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-                 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-                 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
- 
-        def random_headers():
-            return {'User-Agent': choice(desktop_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
- 
-        headers = random_headers()
+        # from random import choice
+
+        # desktop_agents = ['Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+        #          'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+        #          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+        #          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14',
+        #          'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
+        #          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
+        #          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
+        #          'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
+        #          'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+        #          'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
+
+        # def random_headers():
+        #     return {'User-Agent': choice(desktop_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
+
+        # headers = random_headers()
 
         if verbosity >= 3:
             print(_("Purl:"),purl)
@@ -1202,266 +1202,272 @@ class GPerson(GBase):
                 except XMLSyntaxError:
                     LOG.debug(_("Unable to perform HTML analysis"))
                     # os.system('''wget "%(url)s"''' % {'url': purl})
-                import urllib.request
-                try:
-                    page = urllib.request.urlopen(purl)
-                except urllib.error.HTTPError:
-                    LOG.debug(purl)
-                tree = html.fromstring(page.read())
-                LOG.info(str(page))
-
-                #from lxml import etree                
-                #find_text = etree.XPath("//text()", smart_strings=False)
-                #LOG.debug(find_text(tree))
-                #LOG.debug((etree.tostring(tree, method='xml', pretty_print=True)))
-
-                self.url = purl
-                self.title = tree.xpath('//title/text()')
-                LOG.debug((purl, self.title))
-                # Wait after a Genanet request to be fair with the site
-                # between 2 and 7 seconds
-                time.sleep(random.randint(2,7))
-                try:
-                    # Should return M or F
-                    sex = tree.xpath('//div[@id="person-title"]//img/attribute::alt')
-                    self.g_sex = sex[0]
-                    # Seems we have a french codification on the site
-                    if sex[0] == 'H':
-                        self.g_sex = 'M'
-                except:
-                    LOG.debug(self.g_sex)
-                    self.g_sex = 'U'
-                try:
-                    name = tree.xpath('//div[@id="person-title"]//a/text()')
-                    self.g_firstname = str(name[0]).title()
-                    self.g_lastname = str(name[1]).title()
-                except:
-                    LOG.debug(str(name))
-                    self.g_firstname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
-                    self.g_lastname = ""
-                if verbosity >= 1:
-                    print(_("==> GENEANET Name (L%d): %s %s")%(self.level,self.g_firstname,self.g_lastname))
-                if verbosity >= 2:
-                    print(_("Sex:"), self.g_sex)
-                try:
-                    bstring = '//li[contains(., "'+_("Born")+'")]/text()'
-                    if verbosity >= 3:
-                        print("bstring: "+bstring)
-                    birth = tree.xpath(bstring)
-                    LOG.debug(tree.xpath('//div[@id="perso"]//ul/li[0]/text()'))
-                except:
-                    birth = [""]
-                if verbosity >= 3:
-                    print(_("birth")+": %s"%(birth))
-                try:
-                    dstring = '//li[contains(., "'+_("Deceased")+'")]/text()'
-                    if verbosity >= 3:
-                        print("dstring: "+dstring)
-                    death = tree.xpath(dstring)
-                    LOG.debug(tree.xpath('//div[@id="perso"]//ul/li[1]/text()'))
-                except:
-                    death = [""]
-                if verbosity >= 3:
-                    print(_("death")+": %s"%(death))
-                try:
-                    # sometime parents are using circle, sometimes disc !
-                    parents = tree.xpath('//ul[not(descendant-or-self::*[@class="fiche_union"])]//li[@style="vertical-align:middle;list-style-type:disc" or @style="vertical-align:middle;list-style-type:circle"]')
-                except:
-                    LOG.debug(str(tree.xpath('//ul[not(descendant-or-self::*[@class="fiche_union"])]//')))
-                    parents = []
-                try:
-                    spouses = tree.xpath('//ul[@class="fiche_union"]/li')
-                except:
-                    LOG.debug(str(tree.xpath('//ul[@class="fiche_union"]/li')))
-                    spouses = []
-                try:
-                    ld = convert_date(birth[0].split('-')[0].split()[1:])
-                    if verbosity >= 2:
-                        print(_("Birth:"), ld)
-                    self.g_birthdate = format_ca(ld)
-                except:
-                    LOG.debug('birth %s' % birth)
-                    self.g_birthdate = None
-                try:
-                    self.g_birthplace = str(' '.join(birth[0].split('-')[1:]).split(',')[0].strip()).title()
-                    if verbosity >= 2:
-                        print(_("Birth place:"), self.g_birthplace)
-                except:
-                    self.g_birthplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
-                try:
-                    self.g_birthplacecode = str(' '.join(birth[0].split('-')[1:]).split(',')[1]).strip()
-                    match = re.search(r'\d\d\d\d\d', self.g_birthplacecode)
-                    if not match:
-                        self.g_birthplacecode = _("no match")
-                    else:
-                        if verbosity >= 2:
-                            print(_("Birth place code:"), self.g_birthplacecode)
-                except:
-                    self.g_birthplacecode = None
-                try:
-                    ld = convert_date(death[0].split('-')[0].split()[1:])
-                    if verbosity >= 2:
-                        print(_("Death:"), ld)
-                    self.g_deathdate = format_ca(ld)
-                except:
-                    LOG.debug('death %s' % death)
-                    self.g_deathdate = None
-                try:
-                    self.g_deathplace = str(' '.join(death[0].split('-')[1:]).split(',')[0]).strip().title()
-                    if verbosity >= 2:
-                        print(_("Death place:"), self.g_deathplace)
-                except:
-                    self.g_deathplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
-                try:
-                    self.g_deathplacecode = str(' '.join(death[0].split('-')[1:]).split(',')[1]).strip()
-                    match = re.search(r'\d\d\d\d\d', self.g_deathplacecode)
-                    if not match:
-                        self.g_deathplacecode = _("not match")
-                    else:
-                        if verbosity >= 2:
-                            print(_("Death place code:"), self.g_deathplacecode)
-                except:
-                    self.g_deathplacecode = None
-
-                s = 0
-                sname = []
-                sref = []
-                marriage = []
-                for spouse in spouses:
-                    for a in spouse.xpath('a'):
-                        try:
-                            ref = a.xpath('attribute::href')[s]
-                            if verbosity >= 2:
-                                print(_("Spouse %d ref: %s") %(s, ref))
-                        except:
-                            ref = None
-                            LOG.debug(str(a.xpath('attribute::href')))
-                        sosa = a.find('img')
-                        if sosa is None:
-                            try:
-                                sname.append(str(a.xpath('text()')[s]).title())
-                                if verbosity >= 2:
-                                    print(_("Spouse name:"), sname[s])
-                            except:
-                                sname.append("")
-                            try:
-                                sref.append(str(a.xpath('attribute::href')[s]))
-                                if verbosity >= 2:
-                                    print(_("Spouse ref:"), ROOTURL+sref[s])
-                            except:
-                                sref.append("")
-
-                        self.spouseref.append(ROOTURL+sref[s])
-                    try:
-                        marriage.append(str(spouse.xpath('em/text()')[s]))
-                    except:
-                        marriage.append(None)
-                    try:
-                        ld = convert_date(marriage[s].split(',')[s].split()[1:])
-                        if verbosity >= 2:
-                            print(_("Married:"), ld)
-                        self.marriagedate.append(format_ca(ld))
-                    except:
-                        self.marriagedate.append(None)
-                    try:
-                        self.marriageplace.append(str(marriage[s].split(',')[1][1:]).title())
-                        if verbosity >= 2:
-                            print(_("Married place:"), self.marriageplace[s])
-                    except:
-                        self.marriageplace.append(str(marriage[s]))
-                    try:
-                        marriageplacecode = str(marriage[s].split(',')[2][1:])
-                        match = re.search(r'\d\d\d\d\d', marriageplacecode)
-                        if not match:
-                            self.marriageplacecode.append(str(marriage[s]))
-                        else:
-                            if verbosity >= 2:
-                                print(_("Married place code:"), self.marriageplacecode[s])
-                            self.marriageplacecode.append(marriageplacecode)
-                    except:
-                        self.marriageplacecode.append(str(marriage[s]))
-
-                    cnum = 0
-                    clist = []
-                    for c in spouse.xpath('ul/li'):
-                        LOG.info(etree.tostring(c, method='xml', pretty_print=True))
-                        for a in c.xpath('a'):
-                            try:
-                                cref = ROOTURL+str(a.xpath('attribute::href')[cnum])
-                                if verbosity >= 2:
-                                    print(_("Child %d ref: %s") %(cnum, cref))
-                            except:
-                                cref = None
-                                LOG.debug(str(a.xpath('attribute::href')))
-                            sosa = a.find('img')
-                            if sosa is None:
-                                try:
-                                    cname = c.xpath('a/text()')[cnum].title()
-                                    if verbosity >= 2:
-                                        print(_("Child %d name: %s")%(cnum, cname))
-                                except:
-                                    cname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
-                                    LOG.debug(cname)
-                            else:
-                                LOG.info(etree.tostring(c, method='html', pretty_print=False))
-                                LOG.debug('Failed to set children %s' % cnum)
-
-                            clist.append(cref)
-                        cnum = cnum + 1
-                    self.childref.append(clist)
-                    s = s + 1
-                    # End spouse loop
-                    LOG.info('clist %s' % clist)
-
-                self.fref = ""
-                self.mref = ""
-                prefl = []
-                for p in parents:
-                    LOG.info(etree.tostring(p, method='xml', pretty_print=True))
-                    if verbosity >= 3:
-                        print('parent text', p.xpath('text()'))
-                    LOG.info(p.text)
-                    for a in p.xpath('a'):
-                        pref = a.xpath('attribute::href')[0]
-                        LOG.debug(pref)
-                    if p.xpath('a'):
-                        for a in p.xpath('a')[0]:
-                            sosa = a.find('img')
-                            if sosa is None:
-                                try:
-                                    pname = a.xpath('text()')[0].title()
-                                    LOG.info(pnane)
-                                except:
-                                    pname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
-                                    LOG.debug(pname)
-                                    # if pname is ? ? then go to next one
-                                try:
-                                    pref = a.xpath('attribute::href')[0]
-                                    LOG.info(pref)
-                                except:
-                                    LOG.debug(etree.tostring(a, method='xml', pretty_print=True))
-                                    pref = ""
-                            if verbosity >= 1:
-                                print(_("Parent name: %s (%s)") %(pname, ROOTURL+pref))
-                    else:
-                        LOG.info(etree.tostring(p, method='html', pretty_print=False))
-                        #LOG.debug('Failed to set parents %s' % p.text)
-                    prefl.append(ROOTURL+str(pref))
-                try:
-                    self.fref = prefl[0]
-                except:
-                    LOG.debug('no ref for parent 1')
-                    self.fref = ""
-                try:
-                    self.mref = prefl[1]
-                except:
-                    LOG.debug('no ref for parent 2')
-                    self.mref = ""
-                if verbosity >= 2:
-                    print("-----------------------------------------------------------")
-
             else:
                 print(_("We failed to be ok with the server"))
+
+        import urllib.request
+        try:
+            page = urllib.request.urlopen(purl)
+        except urllib.error.HTTPError:
+            LOG.debug(purl)
+        tree = html.fromstring(page.read())
+        LOG.info(str(page))
+
+        #from lxml import etree
+        #find_text = etree.XPath("//text()", smart_strings=False)
+        #LOG.debug(find_text(tree))
+        #LOG.debug((etree.tostring(tree, method='xml', pretty_print=True)))
+
+        self.url = purl
+        self.title = tree.xpath('//title/text()')
+        LOG.debug((purl, self.title))
+        # Wait after a Genanet request to be fair with the site
+        # between 2 and 7 seconds
+        time.sleep(random.randint(2,7))
+        try:
+            # Should return M or F
+            sex = tree.xpath('//div[@id="person-title"]//img/attribute::alt')
+            self.g_sex = sex[0]
+            # Seems we have a french codification on the site
+            if sex[0] == 'H':
+                self.g_sex = 'M'
+        except:
+            LOG.debug(self.g_sex)
+            self.g_sex = 'U'
+        try:
+            name = tree.xpath('//div[@id="person-title"]//a/text()')
+            self.g_firstname = str(name[0]).title()
+            self.g_lastname = str(name[1]).title()
+        except:
+            LOG.debug(str(name))
+            self.g_firstname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
+            self.g_lastname = ""
+        if verbosity >= 1:
+            print(_("==> GENEANET Name (L%d): %s %s")%(self.level,self.g_firstname,self.g_lastname))
+        if verbosity >= 2:
+            print(_("Sex:"), self.g_sex)
+
+        try:
+            bdprof = tree.xpath('//ul/li[preceding::div[@id="person-title"] and \
+            (following::h2[contains(., "Parents")] or following::h2[contains(., "Spouses  and children") \
+                or following::h2[contains(., "Siblings")]])]/text()')
+            if not bdprof:
+                bdprof = tree.xpath('//ul/li[preceding::div[@id="person-title"] and ]/text()')
+            # = '//li[contains(., "'+_("Born")+'")]/text()'
+            if verbosity >= 3:
+                print("bdprof: "+bdprof)
+            birth = [i for i in bdprof if i.startswith(_("Born"))][0]
+            LOG.debug(tree.xpath('//div[@id="perso"]//ul/li[0]/text()'))
+        except:
+            birth = [""]
+        if verbosity >= 3:
+            print(_("birth")+": %s"%(birth))
+        try:
+            #dstring = '//li[contains(., "'+_("Deceased")+'")]/text()'
+            #if verbosity >= 3:
+            #    print("dstring: "+dstring)
+            death = [i for i in bdprof if i.startswith(_("Deceased"))][0]
+            LOG.debug(tree.xpath('//div[@id="perso"]//ul/li[1]/text()'))
+        except:
+            death = [""]
+        if verbosity >= 3:
+            print(_("death")+": %s"%(death))
+        try:
+            # sometime parents are using circle, sometimes disc !
+            parents = tree.xpath('//ul[not(descendant-or-self::*[@class="fiche_union"])]//li[@style="vertical-align:middle;list-style-type:disc" or @style="vertical-align:middle;list-style-type:circle"]')
+        except:
+            LOG.debug(str(tree.xpath('//ul[not(descendant-or-self::*[@class="fiche_union"])]//')))
+            parents = []
+        try:
+            spouses = tree.xpath('//ul[@class="fiche_union"]/li')
+        except:
+            LOG.debug(str(tree.xpath('//ul[@class="fiche_union"]/li')))
+            spouses = []
+        try:
+            ld = convert_date(birth[0].split('-')[0].split()[1:])
+            if verbosity >= 2:
+                print(_("Birth:"), ld)
+            self.g_birthdate = format_ca(ld)
+        except:
+            LOG.debug('birth %s' % birth)
+            self.g_birthdate = None
+        try:
+            self.g_birthplace = str(' '.join(birth[0].split('-')[1:]).split(',')[0].strip()).title()
+            if verbosity >= 2:
+                print(_("Birth place:"), self.g_birthplace)
+        except:
+            self.g_birthplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
+        try:
+            self.g_birthplacecode = str(' '.join(birth[0].split('-')[1:]).split(',')[1]).strip()
+            match = re.search(r'\d\d\d\d\d', self.g_birthplacecode)
+            if not match:
+                self.g_birthplacecode = _("no match")
+            else:
+                if verbosity >= 2:
+                    print(_("Birth place code:"), self.g_birthplacecode)
+        except:
+            self.g_birthplacecode = None
+        try:
+            ld = convert_date(death[0].split('-')[0].split()[1:])
+            if verbosity >= 2:
+                print(_("Death:"), ld)
+            self.g_deathdate = format_ca(ld)
+        except:
+            LOG.debug('death %s' % death)
+            self.g_deathdate = None
+        try:
+            self.g_deathplace = str(' '.join(death[0].split('-')[1:]).split(',')[0]).strip().title()
+            if verbosity >= 2:
+                print(_("Death place:"), self.g_deathplace)
+        except:
+            self.g_deathplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
+        try:
+            self.g_deathplacecode = str(' '.join(death[0].split('-')[1:]).split(',')[1]).strip()
+            match = re.search(r'\d\d\d\d\d', self.g_deathplacecode)
+            if not match:
+                self.g_deathplacecode = _("not match")
+            else:
+                if verbosity >= 2:
+                    print(_("Death place code:"), self.g_deathplacecode)
+        except:
+            self.g_deathplacecode = None
+
+        s = 0
+        sname = []
+        sref = []
+        marriage = []
+        for spouse in spouses:
+            for a in spouse.xpath('a'):
+                try:
+                    ref = a.xpath('attribute::href')[s]
+                    if verbosity >= 2:
+                        print(_("Spouse %d ref: %s") %(s, ref))
+                except:
+                    ref = None
+                    LOG.debug(str(a.xpath('attribute::href')))
+                sosa = a.find('img')
+                if sosa is None:
+                    try:
+                        sname.append(str(a.xpath('text()')[s]).title())
+                        if verbosity >= 2:
+                            print(_("Spouse name:"), sname[s])
+                    except:
+                        sname.append("")
+                    try:
+                        sref.append(str(a.xpath('attribute::href')[s]))
+                        if verbosity >= 2:
+                            print(_("Spouse ref:"), ROOTURL+sref[s])
+                    except:
+                        sref.append("")
+
+                self.spouseref.append(ROOTURL+sref[s])
+            try:
+                marriage.append(str(spouse.xpath('em/text()')[s]))
+            except:
+                marriage.append(None)
+            try:
+                ld = convert_date(marriage[s].split(',')[s].split()[1:])
+                if verbosity >= 2:
+                    print(_("Married:"), ld)
+                self.marriagedate.append(format_ca(ld))
+            except:
+                self.marriagedate.append(None)
+            try:
+                self.marriageplace.append(str(marriage[s].split(',')[1][1:]).title())
+                if verbosity >= 2:
+                    print(_("Married place:"), self.marriageplace[s])
+            except:
+                self.marriageplace.append(str(marriage[s]))
+            try:
+                marriageplacecode = str(marriage[s].split(',')[2][1:])
+                match = re.search(r'\d\d\d\d\d', marriageplacecode)
+                if not match:
+                    self.marriageplacecode.append(str(marriage[s]))
+                else:
+                    if verbosity >= 2:
+                        print(_("Married place code:"), self.marriageplacecode[s])
+                    self.marriageplacecode.append(marriageplacecode)
+            except:
+                self.marriageplacecode.append(str(marriage[s]))
+
+            cnum = 0
+            clist = []
+            for c in spouse.xpath('ul/li'):
+                LOG.info(etree.tostring(c, method='xml', pretty_print=True))
+                for a in c.xpath('a'):
+                    try:
+                        cref = ROOTURL+str(a.xpath('attribute::href')[cnum])
+                        if verbosity >= 2:
+                            print(_("Child %d ref: %s") %(cnum, cref))
+                    except:
+                        cref = None
+                        LOG.debug(str(a.xpath('attribute::href')))
+                    sosa = a.find('img')
+                    if sosa is None:
+                        try:
+                            cname = c.xpath('a/text()')[cnum].title()
+                            if verbosity >= 2:
+                                print(_("Child %d name: %s")%(cnum, cname))
+                        except:
+                            cname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
+                            LOG.debug(cname)
+                    else:
+                        LOG.info(etree.tostring(c, method='html', pretty_print=False))
+                        LOG.debug('Failed to set children %s' % cnum)
+
+                    clist.append(cref)
+                cnum = cnum + 1
+            self.childref.append(clist)
+            s = s + 1
+            # End spouse loop
+            LOG.info('clist %s' % clist)
+
+        self.fref = ""
+        self.mref = ""
+        prefl = []
+        for p in parents:
+            LOG.info(etree.tostring(p, method='xml', pretty_print=True))
+            if verbosity >= 3:
+                print('parent text', p.xpath('text()'))
+            LOG.info(p.text)
+            for a in p.xpath('a'):
+                pref = a.xpath('attribute::href')[0]
+                LOG.debug(pref)
+            if p.xpath('a'):
+                for a in p.xpath('a')[0]:
+                    sosa = a.find('img')
+                    if sosa is None:
+                        try:
+                            pname = a.xpath('text()')[0].title()
+                            LOG.info(pnane)
+                        except:
+                            pname = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
+                            LOG.debug(pname)
+                            # if pname is ? ? then go to next one
+                        try:
+                            pref = a.xpath('attribute::href')[0]
+                            LOG.info(pref)
+                        except:
+                            LOG.debug(etree.tostring(a, method='xml', pretty_print=True))
+                            pref = ""
+                    if verbosity >= 1:
+                        print(_("Parent name: %s (%s)") %(pname, ROOTURL+pref))
+            else:
+                LOG.info(etree.tostring(p, method='html', pretty_print=False))
+                #LOG.debug('Failed to set parents %s' % p.text)
+            prefl.append(ROOTURL+str(pref))
+        try:
+            self.fref = prefl[0]
+        except:
+            LOG.debug('no ref for parent 1')
+            self.fref = ""
+        try:
+            self.mref = prefl[1]
+        except:
+            LOG.debug('no ref for parent 2')
+            self.mref = ""
+        if verbosity >= 2:
+            print("-----------------------------------------------------------")
 
 
     def create_grampsp(self):
