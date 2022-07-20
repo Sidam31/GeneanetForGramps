@@ -1251,11 +1251,12 @@ class GPerson(GBase):
             bdprof = tree.xpath('//ul/li[preceding::div[@id="person-title"] and \
             (following::h2[contains(., "Parents")] or following::h2[contains(., "Spouses  and children") \
                 or following::h2[contains(., "Siblings")]])]/text()')
-            if not bdprof:
-                bdprof = tree.xpath('//ul/li[preceding::div[@id="person-title"] and ]/text()')
+
             # = '//li[contains(., "'+_("Born")+'")]/text()'
             if verbosity >= 3:
-                print("bdprof: "+bdprof)
+                print("bdprof: ")
+                for i in bdprof:
+                    print(i)
             birth = [i for i in bdprof if i.startswith(_("Born"))][0]
             LOG.debug(tree.xpath('//div[@id="perso"]//ul/li[0]/text()'))
         except:
@@ -1284,7 +1285,7 @@ class GPerson(GBase):
             LOG.debug(str(tree.xpath('//ul[@class="fiche_union"]/li')))
             spouses = []
         try:
-            ld = convert_date(birth[0].split('-')[0].split()[1:])
+            ld = convert_date(birth.split('-')[0].split()[1:])
             if verbosity >= 2:
                 print(_("Birth:"), ld)
             self.g_birthdate = format_ca(ld)
@@ -1292,13 +1293,13 @@ class GPerson(GBase):
             LOG.debug('birth %s' % birth)
             self.g_birthdate = None
         try:
-            self.g_birthplace = str(' '.join(birth[0].split('-')[1:]).split(',')[0].strip()).title()
+            self.g_birthplace = str(' '.join(birth.split('-')[1:]).split(',')[0].strip()).title()
             if verbosity >= 2:
                 print(_("Birth place:"), self.g_birthplace)
         except:
             self.g_birthplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
         try:
-            self.g_birthplacecode = str(' '.join(birth[0].split('-')[1:]).split(',')[1]).strip()
+            self.g_birthplacecode = str(' '.join(birth.split('-')[1:]).split(',')[1]).strip()
             match = re.search(r'\d\d\d\d\d', self.g_birthplacecode)
             if not match:
                 self.g_birthplacecode = _("no match")
@@ -1308,7 +1309,7 @@ class GPerson(GBase):
         except:
             self.g_birthplacecode = None
         try:
-            ld = convert_date(death[0].split('-')[0].split()[1:])
+            ld = convert_date(death.split('-')[0].split()[1:])
             if verbosity >= 2:
                 print(_("Death:"), ld)
             self.g_deathdate = format_ca(ld)
@@ -1316,13 +1317,13 @@ class GPerson(GBase):
             LOG.debug('death %s' % death)
             self.g_deathdate = None
         try:
-            self.g_deathplace = str(' '.join(death[0].split('-')[1:]).split(',')[0]).strip().title()
+            self.g_deathplace = str(' '.join(death.split('-')[1:]).split(',')[0]).strip().title()
             if verbosity >= 2:
                 print(_("Death place:"), self.g_deathplace)
         except:
             self.g_deathplace = str(uuid.uuid3(uuid.NAMESPACE_URL, self.url))
         try:
-            self.g_deathplacecode = str(' '.join(death[0].split('-')[1:]).split(',')[1]).strip()
+            self.g_deathplacecode = str(' '.join(death.split('-')[1:]).split(',')[1]).strip()
             match = re.search(r'\d\d\d\d\d', self.g_deathplacecode)
             if not match:
                 self.g_deathplacecode = _("not match")
